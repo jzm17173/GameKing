@@ -310,6 +310,16 @@ public class EnemySkeletonAI : Enemy
         // 计算目标X位置，限制在巡逻边界内
         float targetX = Mathf.Clamp(target.x, leftPos.position.x, rightPos.position.x);
 
+        // 计算到目标的距离
+        float distanceToTarget = Mathf.Abs(targetX - transform.position.x);
+        
+        // 如果已经到达目标，停止移动
+        if (distanceToTarget < 0.1f)
+        {
+            isMoving = false;
+            return;
+        }
+
         // 计算X轴方向
         float directionX = Mathf.Sign(targetX - transform.position.x);
         float movementX = directionX * speed * Time.deltaTime;
@@ -327,7 +337,8 @@ public class EnemySkeletonAI : Enemy
             transform.position.z
         );
 
-        isMoving = Mathf.Abs(movementX) > 0.01f;
+        // 检查是否真的在移动（基于到目标的距离，而不是movementX的大小）
+        isMoving = distanceToTarget > 0.1f;
 
         // 更新面向方向（用于动画）
         if (directionX != 0)
