@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemySkeleton : Enemy
+public class EnemySlime : Enemy
 {
     public float speed;
     public float startWaitTime;
@@ -18,6 +18,11 @@ public class EnemySkeleton : Enemy
     private Animator myAnim;
 
     private Vector2 lastPosition; // 记录上一帧的位置，用于判断移动方向
+
+    public float damageInterval = 1f;         // 伤害间隔时间（秒）
+    private bool isPlayerInContact = false;   // 玩家是否在接触中
+    private float lastDamageTime;             // 上次造成伤害的时间
+    private GameObject player;                // 玩家对象
 
 
     // Start is called before the first frame update
@@ -51,18 +56,20 @@ public class EnemySkeleton : Enemy
         {
             myAnim.SetBool("Run", false);
             // 等待结束
-            if (waitTime <=0)
+            if (waitTime <= 0)
             {
                 // 获取下一个随机位置
                 movePos.position = GetRandomPos();
                 // 恢复等待时间
                 waitTime = startWaitTime;
-            // 等待
-            } else
+                // 等待
+            }
+            else
             {
                 waitTime -= Time.deltaTime;
             }
-        } else
+        }
+        else
         {
             myAnim.SetBool("Run", true);
             // 只有在移动时才检测方向
@@ -71,6 +78,12 @@ public class EnemySkeleton : Enemy
 
         // 更新上一帧位置
         lastPosition = currentPosition;
+
+        // 如果玩家在接触中且达到伤害间隔时间，造成伤害
+        if (isPlayerInContact && Time.time >= lastDamageTime + damageInterval)
+        {
+            DealDamage();
+        }
     }
 
     /// <summary>
@@ -110,7 +123,61 @@ public class EnemySkeleton : Enemy
         return rndPos;
     }
 
-    // 屏蔽父级实现
-    void OnTriggerEnter2D(Collider2D collision) {
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        // 检测碰撞对象是否是玩家
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            player = collision.gameObject;
+            isPlayerInContact = true;
+
+            // 立即造成第一次伤害
+            DealDamage();
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        // 玩家离开接触范围
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            isPlayerInContact = false;
+            player = null;
+        }
+    }
+
+    // 使用Trigger方式检测接触（如果需要穿透但触发伤害）
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            player = other.gameObject;
+            isPlayerInContact = true;
+            DealDamage();
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            isPlayerInContact = false;
+            player = null;
+        }
+    }
+
+    void DealDamage()
+    {
+        if (player != null)
+        {
+            // 获取玩家的生命值组件并造成伤害
+            PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.DamegePlayer(damage);
+                lastDamageTime = Time.time;
+                Debug.Log($"对玩家造成 {damage} 点伤害");
+            }
+        }
     }
 }

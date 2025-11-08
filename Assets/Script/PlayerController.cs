@@ -12,10 +12,13 @@ public class PlayerController : MonoBehaviour
     private BoxCollider2D myFeet;
     private bool isGround;
 
+    // 左移动还是有残影，右移动正常很多
     // Start is called before the first frame update
     void Start()
     {
         myRigidbody = GetComponent<Rigidbody2D>();
+        // 移动时的残影问题
+        myRigidbody.interpolation = RigidbodyInterpolation2D.Interpolate;
         myAnim = GetComponent<Animator>();
         myFeet = GetComponent<BoxCollider2D>();
     }
@@ -35,25 +38,46 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    // 移动时的残影问题
+    // 当前的翻转逻辑基于速度，这可能导致延迟。改为基于输入方向
+    //void Filp()
+    //{
+    //    bool playerHasXAxisSpeed = Mathf.Abs(myRigidbody.velocity.x) > Mathf.Epsilon;
+    //    if (playerHasXAxisSpeed)
+    //    {
+    //        if (myRigidbody.velocity.x > 0.1f)
+    //        {
+    //            transform.localRotation = Quaternion.Euler(0, 0, 0);
+    //        }
+
+    //        if (myRigidbody.velocity.x < -0.1f)
+    //        {
+    //            transform.localRotation = Quaternion.Euler(0, 180, 0);
+
+    //        }
+    //    }
+
+    //}
+
     void Filp()
     {
-        bool playerHasXAxisSpeed = Mathf.Abs(myRigidbody.velocity.x) > Mathf.Epsilon;
+        float moveDir = Input.GetAxis("Horizontal");
+        bool playerHasXAxisSpeed = Mathf.Abs(moveDir) > Mathf.Epsilon;
+
         if (playerHasXAxisSpeed)
         {
-            if (myRigidbody.velocity.x > 0.1f)
+            if (moveDir > 0.1f)
             {
                 transform.localRotation = Quaternion.Euler(0, 0, 0);
             }
-
-            if (myRigidbody.velocity.x < -0.1f)
+            else if (moveDir < -0.1f)
             {
                 transform.localRotation = Quaternion.Euler(0, 180, 0);
-
             }
         }
-
     }
 
+    // 玩家跑
     void Run()
     {
         float moveDir = Input.GetAxis("Horizontal");
@@ -66,6 +90,7 @@ public class PlayerController : MonoBehaviour
         myAnim.SetBool("Run", playerHasXAxisSpeed);
     }
 
+    // 玩家跳
     void Jump()
     {
         if (Input.GetButtonDown("Jump"))
