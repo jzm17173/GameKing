@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// 箭矢类，控制箭矢的移动、伤害和销毁逻辑
-/// </summary>
-public class Arrow : MonoBehaviour
+public class Bullet : MonoBehaviour
 {
     /// <summary>
     /// 箭矢的移动速度
