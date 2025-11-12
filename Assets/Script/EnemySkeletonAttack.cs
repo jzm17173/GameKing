@@ -120,8 +120,6 @@ public class EnemySkeletonAttack : MonoBehaviour
 
             // 标记已造成伤害，避免一帧内多次伤害
             hasDealtDamage = true;
-
-            Debug.Log($"对玩家造成 {attackDamage} 点伤害");
         }
         else
         {

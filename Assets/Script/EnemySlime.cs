@@ -176,7 +176,6 @@ public class EnemySlime : Enemy
             {
                 playerHealth.DamegePlayer(damage);
                 lastDamageTime = Time.time;
-                Debug.Log($"对玩家造成 {damage} 点伤害");
             }
         }
     }

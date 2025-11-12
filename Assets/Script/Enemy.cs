@@ -42,6 +42,7 @@ public abstract class Enemy : MonoBehaviour
     // 受到玩家攻击
     public void TakeDamage(int damage)
     {
+        Debug.Log("Enemy: 受到玩家攻击333"+damage);
         health -= damage;
         FlashColor(flashTime);
     }
