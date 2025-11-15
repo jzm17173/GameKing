@@ -12,12 +12,12 @@ public class HealthBar : MonoBehaviour
     // 血量最大值
     public static int HealthMax;
     // 血量条
-    private Image healthBar;
+    // private Image healthBar;
 
     // Start is called before the first frame update
     void Start()
     {
-        healthBar = GetComponent<Image>();
+        // healthBar = GetComponent<Image>();
         HealthCurrent = HealthMax;
         
     }
@@ -25,7 +25,7 @@ public class HealthBar : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        healthBar.fillAmount = (float)HealthCurrent / (float)HealthMax;
-        healthText.text = HealthCurrent.ToString() + "/" + HealthMax.ToString();
+        // healthBar.fillAmount = (float)HealthCurrent / (float)HealthMax;
+        healthText.text = HealthCurrent.ToString() + " / " + HealthMax.ToString();
     }
 }
