@@ -190,7 +190,7 @@ MonoBehaviour:
   movePos: {fileID: 7848222048716071496}
   leftDownPos: {fileID: 7645986569436200890}
   rightUpPos: {fileID: 6591869166122632092}
-  damageInterval: 2
+  damageInterval: 3
 --- !u!95 &7686995018693154737
 Animator:
   serializedVersion: 3
