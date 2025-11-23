@@ -73,9 +73,9 @@ public class CreateCard : MonoBehaviour
     private int TakingCardNum = 1;
     
     /// <summary>
-    /// 抽牌后的展示时间计数器
+    /// 抽牌后的展示时间计数器（秒）
     /// </summary>
-    private int TakeTime = 0;
+    private float TakeTime = 0;
     
     /// <summary>
     /// 卡牌在手牌中的位置间距
@@ -83,9 +83,9 @@ public class CreateCard : MonoBehaviour
     private float CardPosition = 0;
 
     /// <summary>
-    /// 抽牌后的展示时间最大值
+    /// 抽牌后的展示时间最大值（秒）
     /// </summary>
-    private readonly int TakeTimeMax = 550;
+    private readonly float TakeTimeMax = 3.2f;
 
     /// <summary>
     /// 父对象的宽度
@@ -100,8 +100,9 @@ public class CreateCard : MonoBehaviour
     {
         // 初始化卡组：ID为1的卡牌有5张，ID为2的卡牌有10张
         CardGroup.Add(1, 5);
-        CardGroup.Add(2, 10);
-        CardGroup_Species = 2;  // 卡组中有2种卡牌
+        CardGroup.Add(2, 5);
+        CardGroup.Add(3, 5);
+        CardGroup_Species = 3;  // 卡组中有2种卡牌
         CardGroup_Num = 15;     // 卡组中共有15张卡
 
         // 初始化抽牌流程
@@ -195,31 +196,37 @@ public class CreateCard : MonoBehaviour
     /// </summary>
     public void CardFlow_2() {
         if (CardFlow == 2) {
-            TakeTime++;  // 增加展示时间计数
+            TakeTime += Time.deltaTime;  // 累加展示时间（秒）
             
-            // 当展示时间达到550帧时，开始将卡牌移动到手牌区域
+            // 当展示时间达到设定秒数时，开始将卡牌移动到手牌区域
             if (TakeTime >= TakeTimeMax) {
                 // 计算手牌中每张卡牌的位置间距
                 CardPosition = ParentWidth / (HavingCardNum + 1);
                 
                 // 将当前卡牌缩放到正常大小
-                HavingCard[HavingCardNum].transform.LeanScale(new Vector3(1.0f, 1.0f, 1.0f), 0.5f);
+                HavingCard[HavingCardNum].transform.LeanScale(new Vector3(0.5f, 0.5f, 1.0f), 0.5f);
+
+                float boxWidth = ParentWidth / (HavingCardNum + 1) > 66 ? 66 : ParentWidth / (HavingCardNum + 1);
+                float x = boxWidth / 2 + (ParentWidth - boxWidth * (HavingCardNum + 1)) / 2 + boxWidth * HavingCardNum;
                 
                 // 将当前卡牌移动到其在手牌中的位置（使用RectTransform的move方法以正确操作anchoredPosition）
-                LeanTween.move(HavingCard[HavingCardNum].GetComponent<RectTransform>(), new Vector3(66 + CardPosition / 2 + HavingCardNum * CardPosition, 100, 0), 0.5f);
-                
-                // 调整所有已存在的手牌位置，为新卡牌腾出空间
-                for (int i = 0; i < 81; i++) {
-                    if (HavingCardNum - i >= 0) {
-                        LeanTween.move(HavingCard[HavingCardNum - i].GetComponent<RectTransform>(), new Vector3(66 + CardPosition / 2 + (HavingCardNum - i) * CardPosition, 100, 0), 0.12f);
+                LeanTween.move(HavingCard[HavingCardNum].GetComponent<RectTransform>(), new Vector3(x, 50, 0), 0.5f);
+                // 执行完后再执行移动其他卡牌的动画
+                LeanTween.delayedCall(0.5f, () => {
+                    for (int i = 0; i < 81; i++) {
+                        if (HavingCardNum - i >= 0) {
+                            float newX = boxWidth / 2 + (ParentWidth - boxWidth * (HavingCardNum + 1)) / 2 + boxWidth * (HavingCardNum - i);
+                            LeanTween.move(HavingCard[HavingCardNum - i].GetComponent<RectTransform>(), new Vector3(newX, 50, 0), 0.12f);
+                        }
                     }
-                }
+                });
+                
                 TakeTime = 0;  // 重置时间计数
             }
         }
 
         // 当卡牌已经移动到手牌区域（y坐标 <= -360）时，更新卡组信息并进入下一轮抽牌
-        if (CardFlow == 2 && HavingCard[HavingCardNum].GetComponent<RectTransform>().anchoredPosition.y <= 100) {
+        if (CardFlow == 2 && HavingCard[HavingCardNum].GetComponent<RectTransform>().anchoredPosition.y <= 50) {
             // 从卡组中移除一张已抽取的卡牌
             CardGroup[TakeCardID] = CardGroup[TakeCardID] - 1;
             
@@ -256,13 +263,15 @@ public class CreateCard : MonoBehaviour
         NewCard.GetComponent<CardCreater>().Card_Desc.text = Card[TakeCardID - 1].Card_Desc;      // 设置卡牌描述
 
         // 实例化卡牌对象，并设置父级为parent
-        HavingCard[A] = Instantiate(NewCard, new Vector2(0, 0), NewCard.transform.rotation, parent);
+        HavingCard[A] = Instantiate(NewCard, new Vector3(0, 0, 0), NewCard.transform.rotation, parent);
         // 设置卡牌的初始位置（屏幕左侧外部）
-        HavingCard[A].GetComponent<RectTransform>().anchoredPosition = new Vector2(-1090, 200);
+        HavingCard[A].GetComponent<RectTransform>().anchoredPosition = new Vector3(-300, 212, 0);
+        // 默认缩放为0.5
+        HavingCard[A].transform.localScale = new Vector3(0.5f, 0.5f, 1.0f);
 
         // 播放抽牌动画效果
-        LeanTween.rotate(HavingCard[A], new Vector3(0, 0, 0), 1.8f).setEaseInOutQuart();        // 旋转动画
-        LeanTween.moveX(HavingCard[A].GetComponent<RectTransform>(), 80.0f, 1.8f).setEaseInOutQuart();                   // 水平移动动画（使用RectTransform的moveX方法以正确操作anchoredPosition）
-        LeanTween.scale(HavingCard[A], new Vector3(2.0f, 2.0f, 1.0f), 1.8f).setEaseInOutQuart(); // 缩放动画（放大到2倍）
+        LeanTween.rotate(HavingCard[A], new Vector3(0, 0, 0), 1.8f).setEaseInOutQuart(); // 旋转动画
+        LeanTween.moveX(HavingCard[A].GetComponent<RectTransform>(), 0.0f, 1.8f).setEaseInOutQuart(); // 水平移动动画（使用RectTransform的moveX方法以正确操作anchoredPosition）
+        LeanTween.scale(HavingCard[A], new Vector3(1.0f, 1.0f, 1.0f), 1.8f).setEaseInOutQuart(); // 缩放动画（放大到2倍）
     }
 }

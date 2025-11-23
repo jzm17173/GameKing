@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8a2414f0241334331bb6b4f28b0e977d, type: 3}
-  m_Name: CardTwo
+  m_Name: Card1
   m_EditorClassIdentifier: 
-  Card_Art: {fileID: 21300000, guid: 682607d0568bc42f685c96ab2563b6d2, type: 3}
-  Card_Frame: {fileID: 21300000, guid: 6d9d681b5ddf94796b6134163fadc4b7, type: 3}
-  Card_Name: "\u963F\u82B1"
+  Card_Art: {fileID: 21300000, guid: 9ea5b69f0a148468e8f96dfc98411967, type: 3}
+  Card_Frame: {fileID: 21300000, guid: 2f4f0fc8379d34a5b8682e341f70478c, type: 3}
+  Card_Name: "\u82B1\u82B1"
   Card_Desc: 

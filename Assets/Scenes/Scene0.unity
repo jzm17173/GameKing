@@ -5047,8 +5047,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 472, y: 40}
-  m_SizeDelta: {x: 496, y: 80}
+  m_AnchoredPosition: {x: 468, y: 40}
+  m_SizeDelta: {x: 480, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1436473852
 GameObject:
@@ -16966,6 +16966,7 @@ MonoBehaviour:
   Card:
   - {fileID: 11400000, guid: 114f8b7a346e44e41b0146b3249cc529, type: 2}
   - {fileID: 11400000, guid: 623848148c5714b4c8cfbb076eb6c065, type: 2}
+  - {fileID: 11400000, guid: ad35a8ff37e48447d9ebe0594a7e8f54, type: 2}
   TakeCardID: 0
   CardGroup_Species: 0
   CardGroup_Num: 0
